@@ -1,0 +1,20 @@
+DROP TABLE IF EXISTS tarefa CASCADE;
+DROP TABLE IF EXISTS usuarios CASCADE;
+DROP TABLE IF EXISTS usuario CASCADE;
+
+CREATE TABLE usuario (
+    id SERIAL PRIMARY KEY NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    nome VARCHAR(100) NOT NULL
+);
+
+
+CREATE TABLE tarefa (
+    id SERIAL PRIMARY KEY NOT NULL,
+    usuario_id INT REFERENCES usuario(id),
+    descricao VARCHAR(2000) NOT NULL,
+    nome_setor VARCHAR(100) NOT NULL,
+    prioridade SMALLINT NOT NULL,
+    cadastro_epoch BIGINT NOT NULL,
+    status SMALLINT DEFAULT 0
+)
