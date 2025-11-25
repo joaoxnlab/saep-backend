@@ -95,17 +95,17 @@ app.post('/task', async (req, res, next) => {
     if ([usuario_id, descricao, nome_setor, prioridade].reduce((acc, curr) => acc || curr == undefined, false))
         throw new HttpError(400, 'usuario_id, descricao, nome_setor e prioridade são obrigatórios');
 
-    const cadastro_epoch = Date.now();
+    const cadastro_timestamp = Date.now();
     if (status == undefined) status = 0;
     let result;
     try {
         result = await pool.query<any>(`
                 INSERT INTO tarefa 
                 (usuario_id, descricao, nome_setor, prioridade, cadastro_epoch, status) 
-                VALUES ($1, $2, $3)
+                VALUES ($1, $2, $3, $4, $5, $6)
                 RETURNING *
             `,
-            [usuario_id, descricao, nome_setor, prioridade, cadastro_epoch, status]
+            [usuario_id, descricao, nome_setor, prioridade, cadastro_timestamp, status]
         );
     } catch (err: unknown) {
         if (!(err instanceof Error)) throw new HttpError(500, 'Erro ao criar tarefa');
@@ -125,7 +125,7 @@ app.post('/task', async (req, res, next) => {
 })
 
 app.put('/task/:id', async (req, res, next) => {
-    const id = req.params.id;
+    const id = Number(req.params.id);
     const { prioridade, status } = req.body;
 
     if (!prioridade && !status)
